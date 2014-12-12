@@ -1,0 +1,9 @@
+redaxo/include/master.inc.php
+redaxo/include/generated/*
+.htaccess
+redaxo/include/addons/seo42/backup
+files/
+redaxo/include/backup/
+.fastcgi
+lib/project/css/project.css
+lib/project/css/main.css

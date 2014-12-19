@@ -1,0 +1,20 @@
+<?php
+$REX['MEDIA']['FILENAME']['ipad.png']['file_id'] = '5';
+$REX['MEDIA']['FILENAME']['ipad.png']['re_file_id'] = '0';
+$REX['MEDIA']['FILENAME']['ipad.png']['category_id'] = '0';
+$REX['MEDIA']['FILENAME']['ipad.png']['attributes'] = '';
+$REX['MEDIA']['FILENAME']['ipad.png']['filetype'] = 'application/octet-stream';
+$REX['MEDIA']['FILENAME']['ipad.png']['filename'] = 'ipad.png';
+$REX['MEDIA']['FILENAME']['ipad.png']['originalname'] = 'ipad.png';
+$REX['MEDIA']['FILENAME']['ipad.png']['filesize'] = '721534';
+$REX['MEDIA']['FILENAME']['ipad.png']['width'] = '900';
+$REX['MEDIA']['FILENAME']['ipad.png']['height'] = '696';
+$REX['MEDIA']['FILENAME']['ipad.png']['title'] = '';
+$REX['MEDIA']['FILENAME']['ipad.png']['createdate'] = '1418392551';
+$REX['MEDIA']['FILENAME']['ipad.png']['updatedate'] = '1418392551';
+$REX['MEDIA']['FILENAME']['ipad.png']['createuser'] = 'root';
+$REX['MEDIA']['FILENAME']['ipad.png']['updateuser'] = 'root';
+$REX['MEDIA']['FILENAME']['ipad.png']['revision'] = '0';
+$REX['MEDIA']['FILENAME']['ipad.png']['med_description'] = '';
+$REX['MEDIA']['FILENAME']['ipad.png']['med_copyright'] = '';
+?>

@@ -1,0 +1,20 @@
+<?php
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['file_id'] = '6';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['re_file_id'] = '0';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['category_id'] = '0';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['attributes'] = '';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['filetype'] = 'image/jpeg';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['filename'] = 'summer_landscape-wallpaper-1400x1050.jpg';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['originalname'] = 'summer_landscape-wallpaper-1400x1050.jpg';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['filesize'] = '456432';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['width'] = '1400';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['height'] = '1050';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['title'] = 'Schönes Bild';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['createdate'] = '1418394476';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['updatedate'] = '1419010995';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['createuser'] = 'root';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['updateuser'] = 'root';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['revision'] = '0';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['med_description'] = '';
+$REX['MEDIA']['FILENAME']['summer_landscape-wallpaper-1400x1050.jpg']['med_copyright'] = '';
+?>

@@ -1,0 +1,132 @@
+?><?php if ($this->ctype == '1' || ($this->ctype == '-1')) { ?><h1>Willkommen</h1><?php
+$description = "h2. Hallo 2<br />
+<br />
+Lorem ipsum dolor sit amet, *consetetur sadipscing elitr*, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem <br />
+<br />
+&quot;ipsum dolor sit amet&quot;&quot;:http://www.orf.at";
+$description = htmlspecialchars_decode($description);
+$description = str_replace("<br />","",$description);
+$description = OOAddon::isAvailable('textile')?rex_a79_textile($description):$description;
+$description = str_replace("###","&#x20;",$description);
+?>
+<div class="textContainer">
+<?php
+echo $description;
+?>
+</div><?php
+$image1 = OOMedia::getMediaByFileName("summer_landscape-wallpaper-1400x1050.jpg");
+?>
+<div class="row">
+    <div class="col-sm-12 bild">
+        <a rel="lightbox-<?php echo $image1->getId(); ?>" href="<?php echo seo42::getImageManagerFile($image1->getFileName(), "lightbox"); ?>" title="<?php echo $image1->getTitle(); ?>">
+            <img class="img-responsive" src="<?php echo seo42::getImageManagerFile($image1->getFileName(), "contentImg"); ?>" title="<?php echo $image1->getTitle(); ?>" />
+        </a>
+    </div>
+</div>
+<?php
+
+$rid = "s".rand(1, 999);
+
+$article = OOArticle::getArticleById($this->article_id);
+
+$images = split(",", "summer_landscape-wallpaper-1400x1050.jpg,ipad.png,intro-bg.jpg,banner-bg.jpg,dog.png,intro-bg.jpg,phones.png,ipad.png");
+?>
+<div class="gallery">
+    <div class="row">
+        <?php foreach($images as $img) {
+            $imageObj = OOMedia::getMediaByFileName($img);
+            ?>
+            <div class="col-xs-3 img">
+                <a rel="lightbox-<?php echo $rid; ?>" href="<?php echo seo42::getImageManagerFile($imageObj->getFileName(), "lightbox"); ?>" title="<?php echo $imageObj->getTitle(); ?>">
+                    <img class="img-responsive" src="<?php echo seo42::getImageManagerFile($imageObj->getFileName(), "gallery"); ?>" title="<?php echo $imageObj->getTitle(); ?>" />
+                </a>
+            </div>
+        <?php } ?>
+    </div>
+</div>
+<?php
+$error = array();
+if($_POST['send']) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $telefon = $_POST['telefon'];
+    $nachricht = $_POST['nachricht'];
+
+    if(!$name) {
+        $error['name'] = 'Bitte geben Sie Ihren Namen an!';
+    }
+    if(!$email) {
+        $error['email'] = 'Bitte geben Sie Ihre E-Mail-Adresse an!';
+    }
+    if(!$nachricht) {
+        $error['email'] = 'Bitte geben Sie eine Nachricht an!';
+    }
+    if(empty($error)) {
+        $message = "Neue Anfrage:\n\n";
+        $message.= "Name: ".$name."\n";
+        $message.= "E-Mail: ".$email."\n";
+        $message.= "Telefon: ".$telefon."\n\n";
+        $message.= "Nachricht: ".$nachricht."\n";
+
+        $mail = new rex_mailer();
+        $mail->SetFrom($email);
+        $mail->Subject = "Ferienwohnungen Drexel - Anfrage";
+        $mail->Body    = nl2br($message);
+        $mail->AltBody = $message;
+        $mail->AddAddress("info@ferienwohnungen-drexel.at");
+        $mail->Send();
+        header("Location: ".seo42::getFullUrl(1));
+        exit;
+
+    }
+}
+?>
+
+<?php if($error) { ?>
+<div class="alert alert-danger" role="alert">
+    <?php foreach($error as $e) { ?>
+        <li><?php echo $e; ?></li>
+    <?php } ?>
+</div>
+<?php } ?>
+
+<form method="post" class="form-horizontal" role="form">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group required">
+            <label for="name" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" id="name" name="name" value="<?php echo $_POST['name']; ?>" />
+            </div>
+        </div>
+
+        <div class="form-group required">
+            <label for="email" class="col-sm-2 control-label">E-Mail</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" id="email" name="email" value="<?php echo $_POST['email']; ?>" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="telefon" class="col-sm-2 control-label">Telefon</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" id="telefon" name="telefon" value="<?php echo $_POST['telefon']; ?>" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nachricht" class="col-sm-2 control-label">Nachricht</label>
+            <div class="col-sm-8">
+                <textarea class="form-control" id="nachricht" name="nachricht" ><?php echo $_POST['nachricht']; ?></textarea>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <div class="col-sm-10 text-right">
+                <input type="submit" class="btn btn-default btn-fd" name="send" value="Anfrage senden" />
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+<?php } ?>

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+mysqldump \
+--skip-opt \
+--allow-keywords \
+--extended-insert \
+--quote-names \
+--create-options \
+--compress \
+--default-character-set=latin1 \
+--add-drop-database \
+--add-drop-table \
+--databases \
+web197001_001 > ../DB/init.sql

@@ -1,0 +1,20 @@
+<?php
+$REX['MEDIA']['FILENAME']['phones.png']['file_id'] = '4';
+$REX['MEDIA']['FILENAME']['phones.png']['re_file_id'] = '0';
+$REX['MEDIA']['FILENAME']['phones.png']['category_id'] = '0';
+$REX['MEDIA']['FILENAME']['phones.png']['attributes'] = '';
+$REX['MEDIA']['FILENAME']['phones.png']['filetype'] = 'application/octet-stream';
+$REX['MEDIA']['FILENAME']['phones.png']['filename'] = 'phones.png';
+$REX['MEDIA']['FILENAME']['phones.png']['originalname'] = 'phones.png';
+$REX['MEDIA']['FILENAME']['phones.png']['filesize'] = '353890';
+$REX['MEDIA']['FILENAME']['phones.png']['width'] = '900';
+$REX['MEDIA']['FILENAME']['phones.png']['height'] = '595';
+$REX['MEDIA']['FILENAME']['phones.png']['title'] = '';
+$REX['MEDIA']['FILENAME']['phones.png']['createdate'] = '1418392551';
+$REX['MEDIA']['FILENAME']['phones.png']['updatedate'] = '1418392551';
+$REX['MEDIA']['FILENAME']['phones.png']['createuser'] = 'root';
+$REX['MEDIA']['FILENAME']['phones.png']['updateuser'] = 'root';
+$REX['MEDIA']['FILENAME']['phones.png']['revision'] = '0';
+$REX['MEDIA']['FILENAME']['phones.png']['med_description'] = '';
+$REX['MEDIA']['FILENAME']['phones.png']['med_copyright'] = '';
+?>

@@ -1,7 +1,7 @@
 <?php
 $ssa = OOArticle::getSiteStartArticle();
 $curArticle = OOArticle::getArticleById($this->article_id);
-$isContact = $curArticle->getId()==2;
+$isContact = $curArticle->getId()==7;
 $headerImages = array_filter(explode(',', getHierarchicalVar('art_header_images', $curArticle, $ssa)));
 ?>
 <!DOCTYPE html>
@@ -43,24 +43,14 @@ $headerImages = array_filter(explode(',', getHierarchicalVar('art_header_images'
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#">Home</a>
-                </li>
-                <li>
-                    <a href="#">Zimmer</a>
-                </li>
-                <li>
-                    <a href="#">Preise</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
-            </ul>
+            <?php
+            $nav = new nav42();
+            $nav->setLevelDepth(1);
+            $nav->setUlClass("nav navbar-nav navbar-right", 0);
+            echo $nav->getNavigationByLevel(0);
+            ?>
         </div>
-        <!-- /.navbar-collapse -->
     </div>
-    <!-- /.container -->
 </nav>
 
 <?php if($isContact) { ?>
@@ -116,23 +106,12 @@ else {
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <ul class="list-inline">
-                    <li>
-                        <a href="#home">Home</a>
-                    </li>
-                    <li class="footer-menu-divider">&sdot;</li>
-                    <li>
-                        <a href="#about">Impressum</a>
-                    </li>
-                    <li class="footer-menu-divider">&sdot;</li>
-                    <li>
-                        <a href="#services">Sitemap</a>
-                    </li>
-                    <li class="footer-menu-divider">&sdot;</li>
-                    <li>
-                        <a href="#contact">Kontakt</a>
-                    </li>
-                </ul>
+                <?php
+                $nav = new nav42();
+                $nav->setLevelDepth(1);
+                $nav->setUlClass("list-inline", 0);
+                echo $nav->getNavigationByCategory(8);
+                ?>
             </div>
         </div>
     </div>

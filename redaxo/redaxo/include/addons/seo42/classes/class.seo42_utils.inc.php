@@ -1,5 +1,20 @@
 <?php
 
+define('SEO42_URL_TYPE_DEFAULT', 0); 
+define('SEO42_URL_TYPE_INTERN_REPLACE_CLANG', 1); 
+define('SEO42_URL_TYPE_USERDEF_INTERN', 2);
+define('SEO42_URL_TYPE_MEDIAPOOL', 3);
+define('SEO42_URL_TYPE_LANGSWITCH', 4); // should also be handled by navigation output.
+define('SEO42_URL_TYPE_NONE', 5); // should also be handled by navigation output.
+define('SEO42_URL_TYPE_REMOVE_ROOT_CAT', 6);
+define('SEO42_URL_TYPE_INTERN_REPLACE', 7);
+define('SEO42_URL_TYPE_CALL_FUNC', 8); // should also be handled by navigation output.
+define('SEO42_URL_TYPE_USERDEF_EXTERN', 9);
+
+define('SEO42_REWRITEMODE_SPECIAL_CHARS', 0);
+define('SEO42_REWRITEMODE_URLENCODE', 1);
+define('SEO42_REWRITEMODE_INHERIT', 2);
+
 class seo42_utils {
 	public static function appendToPageHeader($params) {
 		global $REX;
@@ -7,11 +22,7 @@ class seo42_utils {
 		$insert = '<!-- BEGIN seo42 -->' . PHP_EOL;
 		$insert .= '<link rel="stylesheet" type="text/css" href="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/seo42.css" />' . PHP_EOL;
 		$insert .= '<link rel="stylesheet" type="text/css" href="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/qtip.css" />' . PHP_EOL;
-		$insert .= '<link rel="stylesheet" type="text/css" href="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/jquery.tag-editor.css" />' . PHP_EOL;
-		$insert .= '<link rel="stylesheet" type="text/css" href="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/jquery.dropdown.css" />' . PHP_EOL;
 		$insert .= '<script type="text/javascript" src="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/jquery.qtip.min.js"></script>' . PHP_EOL;
-		$insert .= '<script type="text/javascript" src="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/jquery.tag-editor.min.js"></script>' . PHP_EOL;
-		$insert .= '<script type="text/javascript" src="../' . $REX['MEDIA_ADDON_DIR'] . '/seo42/jquery.dropdown.min.js"></script>' . PHP_EOL;
 		$insert .= '<!-- END seo42 -->';
 	
 		return $params['subject'] . PHP_EOL . $insert;
@@ -20,9 +31,12 @@ class seo42_utils {
 	public static function init($params) {
 		global $REX;
 
+		// init globals
+		seo42::init();
+
 		if ($REX['MOD_REWRITE']) {
 			// includes
-			require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.seo42_rewrite.inc.php');
+			require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.rexseo_rewrite.inc.php');
 
 			if ($REX['REDAXO']) { // this is only necessary for backend
 				$extensionPoints = array(
@@ -35,12 +49,12 @@ class seo42_utils {
 
 				// generate pathlist on each extension point
 				foreach($extensionPoints as $extensionPoint) {
-					rex_register_extension($extensionPoint, 'seo42_generate_pathlist');
+					rex_register_extension($extensionPoint, 'rexseo_generate_pathlist');
 				}
 			}
 
 			// init rewriter 
-			$rewriter = new SEO42Rewrite();
+			$rewriter = new RexseoRewrite();
 
 			// rewrite ep 
 			rex_register_extension('URL_REWRITE', array ($rewriter, 'rewrite'));
@@ -54,8 +68,8 @@ class seo42_utils {
 		// controller
 		include($REX['INCLUDE_PATH'] . '/addons/seo42/controller.inc.php');
 
-		// seo42 post init
-		rex_register_extension_point('SEO42_INCLUDED');
+		// rexseo post init
+		rex_register_extension_point('REXSEO_INCLUDED');
 	}
 
 	public static function sendHeaders() {
@@ -189,7 +203,7 @@ class seo42_utils {
 	public static function getServerUrl() {
 		$url = $_SERVER['REQUEST_URI'];
 		$parts = explode('/',$url);
-		$serverUrl = 'http://' . self::getServerHost();
+		$serverUrl = 'http://' . $_SERVER['SERVER_NAME'];
 
 		for ($i = 0; $i < count($parts) - 2; $i++) {
 			$serverUrl .= $parts[$i] . "/";
@@ -446,6 +460,18 @@ class seo42_utils {
 		}
 	}
 
+	public static function isAllowedDomain() {
+		global $REX;
+
+		$domains = json_decode($REX['ADDON']['seo42']['settings']['allowed_domains'], true);
+		
+		if ($domains != NULL && in_array(seo42::getServerWithSubDir(), $domains)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static function removeRootCatFromUrl($curUrl, $clangId) {
 		global $REX;
 
@@ -517,170 +543,122 @@ class seo42_utils {
 		fclose($fileHandle);
 	}
 
-	public static function getSettingsFile() {
+	public static function updateRobotsFile($content) {
 		global $REX;
 
-		if (isset($REX['WEBSITE_MANAGER']) && $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() != $REX['WEBSITE_MANAGER']->getMasterWebsiteId()) {
-			return SEO42_DATA_DIR . 'settings' . $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() . '.inc.php';
-		} else {
-			return SEO42_DATA_DIR . 'settings.inc.php';
+		$robotsContent = '';
+		$robotsFile = self::getRobotsFile();
+
+		if (!file_exists($robotsFile)) {
+			self::createDynFile($robotsFile);
 		}
+
+		// file content
+		$robotsContent .= '$REX[\'ADDON\'][\'seo42\'][\'settings\'][\'robots\'] = \'' . $content . '\';' . PHP_EOL;
+
+	  	rex_replace_dynamic_contents($robotsFile, $robotsContent);
 	}
 
-	public static function getRedirectsFile() {
+	public static function includeRobotsSettings() {
 		global $REX;
 
-		if (isset($REX['WEBSITE_MANAGER']) && $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() != $REX['WEBSITE_MANAGER']->getMasterWebsiteId()) {
-			return SEO42_DATA_DIR . 'redirects' . $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() . '.inc.php';
+		$robotsFile = self::getRobotsFile();
+
+		if (file_exists($robotsFile)) {
+			include($robotsFile);
 		} else {
-			return SEO42_DATA_DIR . 'redirects.inc.php';
+			$REX['ADDON']['seo42']['settings']['robots'] = '';
 		}
 	}
 
-	public static function includeSettingsFile() {
-		global $REX; // important for include
+	public static function updateRedirectsFile() {
+		global $REX;
 
-		$settingsFile = self::getSettingsFile();
-
-		if (!file_exists($settingsFile)) {
-			self::updateSettingsFile(false);
-		}
-
-		require_once($settingsFile);
-	}
-
-	public static function includeRedirectsFile() {
-		global $REX; // important for include
-
+		$redirectsContent = '';
 		$redirectsFile = self::getRedirectsFile();
 
 		if (!file_exists($redirectsFile)) {
-			self::updateRedirectsFile(false);
+			self::createDynFile($redirectsFile);
 		}
 
-		require_once($redirectsFile);
-	}
+		// file content
+		$redirectsContent .= '$REX[\'SEO42_REDIRECTS\'] = array(' . PHP_EOL;
 
-	public static function updateSettingsFile($showSuccessMsg = true) {
-		global $REX, $I18N;
+		$sql = rex_sql::factory();
+		//$sql->debugsql = true;
+		$sql->setQuery('SELECT * FROM ' . $REX['TABLE_PREFIX'] . 'redirects');
 
-		$settingsFile = self::getSettingsFile();
-		$msg = self::checkDirForFile($settingsFile);
-
-		if ($msg != '') {
-			if ($REX['REDAXO']) {
-				echo rex_warning($msg);
-			}
-		} else {
-			if (!file_exists($settingsFile)) {
-				self::createDynFile($settingsFile);
-			}
-
-			// deprecated settings
-			unset($REX['ADDON']['seo42']['settings']['cached_redirects']);
-			unset($REX['ADDON']['seo42']['settings']['no_double_content_redirects_only_frontend']);
-
-			$content = "<?php\n\n";
+		for ($i = 0; $i < $sql->getRows(); $i++) {
+			$redirectsContent .= "\t" . '"' . $sql->getValue('source_url') . '" => "' . $sql->getValue('target_url') . '"';
 		
-			foreach ((array) $REX['ADDON']['seo42']['settings'] as $key => $value) {
-				$content .= "\$REX['ADDON']['seo42']['settings']['$key'] = " . var_export($value, true) . ";\n";
+			if ($i < $sql->getRows() - 1) {
+				$redirectsContent .= ', ' . PHP_EOL;
 			}
 
-			if (rex_put_file_contents($settingsFile, $content)) {
-				if ($REX['REDAXO'] && $showSuccessMsg) {
-					echo rex_info($I18N->msg('seo42_config_ok'));
-				}
-			} else {
-				if ($REX['REDAXO']) {
-					echo rex_warning($I18N->msg('seo42_config_error'));
-				}
-			}
+			$sql->next();
 		}
-	}
 
-	public static function updateRedirectsFile($showSuccessMsg = true) {
-		global $REX, $I18N;
+		$redirectsContent .= PHP_EOL . ');' . PHP_EOL;
 
-		$redirectsFile = self::getRedirectsFile();
-		$msg = self::checkDirForFile($redirectsFile);
-
-		if ($msg != '') {
-			if ($REX['REDAXO']) {
-				echo rex_warning($msg);
-			}
+	  	if (rex_replace_dynamic_contents($redirectsFile, $redirectsContent)) {
+			return true;
 		} else {
-			if (!file_exists($redirectsFile)) {
-				self::createDynFile($redirectsFile);
-			}
-
-			$sql = rex_sql::factory();
-			//$sql->debugsql = true;
-			$sql->setQuery('SELECT * FROM ' . $REX['TABLE_PREFIX'] . 'redirects');
-
-			$REX['SEO42_CACHED_REDIRECTS'] = array();
-
-			for ($i = 0; $i < $sql->getRows(); $i++) {
-				$REX['SEO42_CACHED_REDIRECTS'][$sql->getValue('source_url')] = $sql->getValue('target_url');
-
-				$sql->next();
-			}
-
-			$content = "<?php\n\n";
-			$content .= "\$REX['SEO42_CACHED_REDIRECTS'] = " . var_export($REX['SEO42_CACHED_REDIRECTS'], true) . ";\n";
-
-			if (rex_put_file_contents($redirectsFile, $content)) {
-				if ($REX['REDAXO'] && $showSuccessMsg) {
-					echo rex_info($I18N->msg('seo42_config_ok'));
-				}
-			} else {
-				if ($REX['REDAXO']) {
-					echo rex_warning($I18N->msg('seo42_config_error'));
-				}
-			}
+			return false;
 		}
 	}
 
 	public static function redirect() {
 		global $REX;
 
-		if (isset($REX['SEO42_CACHED_REDIRECTS']) && count($REX['SEO42_CACHED_REDIRECTS']) > 0) {
-			if (seo42::isSubDirInstall()) {
-				// remove subdir from request uri
-				$requestUri = self::trimSubDir($_SERVER['REQUEST_URI']);
-			} else {
-				$requestUri = $_SERVER['REQUEST_URI'];
-			}
-			
-			$redirect = false;
-			
-			if (array_key_exists($requestUri, $REX['SEO42_CACHED_REDIRECTS'])) {
-				$redirectUri = $REX['SEO42_CACHED_REDIRECTS'][$requestUri];
-				$redirect = true;
-				
-			} elseif ($REX['ADDON']['seo42']['settings']['redirects_allow_regex']) {
-				if ($redirectUri = self::regexRedirect($requestUri)) {			
-					$redirect = true;
-				}
-			}
+		$redirectsFile = self::getRedirectsFile();
 
-			if ($redirect) {
+		if (file_exists($redirectsFile)) {
+			include($redirectsFile);
+
+			if (isset($REX['SEO42_REDIRECTS']) && count($REX['SEO42_REDIRECTS']) > 0) {
+				seo42::init(); 
+
 				if (seo42::isSubDirInstall()) {
-					// add subdir to target url
-					$targetUrl = '/' . seo42::getServerSubDir() . $redirectUri;
+					// remove subdir from request uri
+					$requestUri = self::trimSubDir($_SERVER['REQUEST_URI']);
 				} else {
-					$targetUrl = $redirectUri;
+					$requestUri = $_SERVER['REQUEST_URI'];
+				}
+				
+				$redirect = false;
+				
+				if(array_key_exists($requestUri, $REX['SEO42_REDIRECTS'])) {
+					
+					$redirectUri = $REX['SEO42_REDIRECTS'][$requestUri];
+					$redirect = true;
+					
+				} elseif($REX['ADDON']['seo42']['settings']['redirects_allow_regex']) {
+					
+					if($redirectUri = self::regexRedirect($requestUri)) {			
+						$redirect = true;
+					}
+					
 				}
 
-				if (strpos($targetUrl, 'http') === false) {
-					$location = seo42::getServerUrl()  . ltrim($targetUrl, '/');
-				} else {
-					$location = $targetUrl;
-				}
-	
-				header('HTTP/1.1 301 Moved Permanently');
-			 	header('Location: ' . $location);
+				if ($redirect) {
+					if (seo42::isSubDirInstall()) {
+						// add subdir to target url
+						$targetUrl = '/' . seo42::getServerSubDir() . $redirectUri;
+					} else {
+						$targetUrl = $redirectUri;
+					}
 
-				exit;
+					if (strpos($targetUrl, 'http') === false) {
+						$location = seo42::getServerUrl()  . ltrim($targetUrl, '/');
+					} else {
+						$location = $targetUrl;
+					}
+		
+					header('HTTP/1.1 301 Moved Permanently');
+				 	header('Location: ' . $location);
+
+					exit;
+				}
 			}
 		}
 	}
@@ -688,19 +666,21 @@ class seo42_utils {
 	public static function regexRedirect($requestUri) {
 		global $REX;
 
-		$regexArray = preg_grep('/\*/', array_keys($REX['SEO42_CACHED_REDIRECTS']));
+		$regexArray = preg_grep('/\*/', array_keys($REX['SEO42_REDIRECTS']));
 		
 		foreach($regexArray as $link) {
+			
 			// all * replace with "([\w.-]+)" regex
 			$preg = str_replace('\*', '([\w.-]+)', preg_quote($link));
 			
-			if (preg_match('#'.$preg.'#', $requestUri, $matches)) {
-				$url = $REX['SEO42_CACHED_REDIRECTS'][$link];
+			if(preg_match('#'.$preg.'#', $requestUri, $matches)) {
+				
+				$url = $REX['SEO42_REDIRECTS'][$link];
 				
 				// check if any variables in the Target-Url
-				if (preg_match_all('/\{(\d)\}/', $url, $match)) {			
+				if(preg_match_all('/\{(\d)\}/', $url, $match)) {			
 					
-					foreach($match[0] as $key => $value) {						
+					foreach($match[0] as $key=>$value) {						
 						$url = str_replace($value, $matches[$match[1][$key]], $url);						
 					}
 					
@@ -710,10 +690,31 @@ class seo42_utils {
 				
 			}
 		}
+		
 	}
 
 	public static function trimSubDir($string) {
 		return '/' . substr($string, strlen('/' . seo42::getServerSubDir()));
+	}
+
+	public static function getCacheFile($cacheFile) {
+		global $REX;
+
+		if (isset($REX['WEBSITE_MANAGER']) && $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() != 1) {
+			$file = $cacheFile . $REX['WEBSITE_MANAGER']->getCurrentWebsiteId() . '.inc.php';
+		} else {
+			$file = $cacheFile . '.inc.php';
+		}
+
+		return $REX['INCLUDE_PATH'] . '/addons/seo42/generated/' . $file;
+	}
+
+	public static function getRedirectsFile() {
+		return self::getCacheFile('redirects');
+	}
+
+	public static function getRobotsFile() {
+		return self::getCacheFile('robots');
 	}
 
 	public static function requestUriFix() { // for iis only
@@ -733,6 +734,22 @@ class seo42_utils {
 			return $REX['ADDON']['seo42']['settings']['lang'][$clang]['inherit_from_clang'];
 		} else {
 			return $clang;
+		}
+	}
+
+	public static function checkForRedirectsFile() {
+		global $REX, $I18N;
+
+		$sql = rex_sql::factory();
+		//$sql->debugsql = true;
+		$sql->setQuery('SELECT * FROM ' . $REX['TABLE_PREFIX'] . 'redirects');
+
+		if ($sql->getRows() > 0 && !file_exists(self::getRedirectsFile())) {
+			if (self::updateRedirectsFile()) {
+				echo rex_info($I18N->msg('seo42_redirect_restore_cachefile_ok', '/seo42/generated/' . basename(self::getRedirectsFile())));
+			} else {
+				echo rex_warning($I18N->msg('seo42_redirect_restore_cachefile_fail', '/seo42/generated/' . basename(self::getRedirectsFile())));
+			}
 		}
 	}
 
@@ -795,16 +812,16 @@ class seo42_utils {
 		return -1;
 	}
 
-	public static function getLangSettingsMsg() {
+	public static function getLangSettingsFile() {
 		global $REX, $I18N;
 
 		if (!isset($REX['ADDON']['seo42']['settings']['lang']) || seo42::getLangCount() != count($REX['ADDON']['seo42']['settings']['lang'])) {
-			$icon = '<span title="' . $I18N->msg('seo42_setup_langcount_error') . '" class="seo42-tooltip status exclamation">&nbsp;</span>';
+			$icon = '<span title="' . $I18N->msg('seo42_setup_langfile_error') . '" class="seo42-tooltip status exclamation">&nbsp;</span>';
 		} else {
 			$icon = '';
 		}
 
-		return '<span class="rex-form-read" id="lang_hint">' . $I18N->msg('seo42_setup_lang_settings_hint') . '</span>' . $icon;
+		return '<span class="rex-form-read" id="lang_hint"><code>/seo42/settings.lang.inc.php</code></span>' . $icon;
 	}
 
 	public static function emptySEODataAfterClangAdded($params) {
@@ -824,7 +841,7 @@ class seo42_utils {
 		$sanitizedUrlParts = explode('/', $sanitizedUrl);
 
 		for ($i = 0; $i < count($sanitizedUrlParts); $i++) {
-			$sanitizedUrlParts[$i] = seo42_parse_article_name($sanitizedUrlParts[$i], $REX['ARTICLE_ID'], $REX['CUR_CLANG']);
+			$sanitizedUrlParts[$i] = rexseo_parse_article_name($sanitizedUrlParts[$i], $REX['ARTICLE_ID'], $REX['CUR_CLANG']);
 		}
 
 		$sanitizedUrl = implode('/', $sanitizedUrlParts);
@@ -837,7 +854,7 @@ class seo42_utils {
 	public static function sendHeadersForArticleOnly() {
 		global $REX;
 
-		if ($REX['ADDON']['seo42']['settings']['send_header_x_ua_compatible']) {
+		if ($REX['ADDON']['seo42']['settings']['send_header_x_ua_compatible'] == 1) {
 			header('X-UA-Compatible: IE=Edge');
 		}
 	}
@@ -876,165 +893,6 @@ class seo42_utils {
 
 			// do db update
 			$sql->update();
-		}
-	}
-
-	public static function checkDir($dir) {
-		global $REX, $I18N;
-
-		$path = $dir;
-
-		if (!@is_dir($path)) {
-			@mkdir($path, $REX['DIRPERM'], true);
-		}
-
-		if (!@is_dir($path)) {
-			if ($REX['REDAXO']) {
-				return $I18N->msg('seo42_install_make_dir', $dir);
-			}
-		} elseif (!@is_writable($path . '/.')) {
-			if ($REX['REDAXO']) {
-				return $I18N->msg('seo42_install_perm_dir', $dir);
-			}
-		}
-		
-		return '';
-	}
-
-	public static function checkDirForFile($fileWithPath) {
-		$pathInfo = pathinfo($fileWithPath);
-
-		return self::checkDir($pathInfo['dirname']);
-	}
-
-	public static function convertVarType($originalValue, $newValue) {
-		switch (gettype($originalValue)) {
-			case 'string':
-				return trim($newValue);
-				break;
-			case 'integer':
-				return intval($newValue);
-				break;
-			case 'boolean':
-				return (bool) $newValue;
-				break;
-			case 'array':
-				if ($newValue == '') {
-					return array();
-				} else {
-					return explode(SEO42_ARRAY_DELIMITER, $newValue);
-				}
-				break;
-			default:
-				return $newValue;
-				
-		}
-	}
-
-	public static function noDoubleContentRedirect() {
-		global $REX;
-
-		if ($REX['ADDON']['seo42']['settings']['no_double_content_redirects'] == SEO42_NO_DOUBLE_CONTENT_REDIRECT_NONE) {
-			// do nothing
-			return;
-		} elseif ($REX['ADDON']['seo42']['settings']['no_double_content_redirects_availability'] == SEO42_NO_DOUBLE_CONTENT_REDIRECT_AVAILABILITY_FRONTEND && $REX['REDAXO']) {
-			// do nothing
-			return;
-		} elseif (isset($REX['SETUP']) && $REX['SETUP']) {
-			// do nothing
-			return;
-		} else {
-			// todo: here now seo42 methods can be used!
-			$urlParts = parse_url($REX['SERVER']);
-
-			if (isset($urlParts['scheme'])) {
-				$protocol = $urlParts['scheme'];
-			} else {
-				$protocol = 'http';
-			}
-
-			if (isset($urlParts['host'])) {
-				$server = $urlParts['host'];
-			} else {
-				$server = $REX['SERVER'];
-			}
-
-			$location = '';
-			$serverHost = self::getServerHost();
-			$requestUri = $_SERVER['REQUEST_URI'];
-
-			// check for possible protocol only redirect
-			if (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] != $protocol) {
-				$location = $protocol . '://' . $serverHost . $requestUri;
-			}
-
-			switch ($REX['ADDON']['seo42']['settings']['no_double_content_redirects']) {
-				case SEO42_NO_DOUBLE_CONTENT_REDIRECT_ONE_DOMAIN_ONLY:
-					// one domain only (when website manager ist installed this redirect is not allowed)
-					if ($serverHost != $server) {
-						// don't redirect if server url is empty, or default value or not full url
-						if (self::isWebsiteUrlValid(seo42::getServerUrl())) {
-							$location = $protocol . '://' . $server . $requestUri;
-						}
-					}
-
-					break;
-				case SEO42_NO_DOUBLE_CONTENT_REDIRECT_NON_WWW_TO_WWW:
-					// non-www to www
-					if (preg_match('/^[^.]+\.[^.]+$/', $serverHost, $hits)) {
-						$location = $protocol . '://www.' . $hits[0] . $requestUri;
-					}
-
-					break;
-				case SEO42_NO_DOUBLE_CONTENT_REDIRECT_WWW_TO_NON_WWW:
-					// www to non-www
-					if (preg_match('/^www\.(.*)$/', $serverHost, $hits)) {
-						$location = $protocol . '://' . substr($hits[0], 4) . $requestUri;
-					}
-
-					break;
-				case SEO42_NO_DOUBLE_CONTENT_REDIRECT_ONLY_HTTPS:
-					// https only
-					$urlParts = parse_url($serverHost);
-
-					if (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == 'http') {
-						$location = 'https://' . $serverHost . $requestUri;
-					}
-
-					break;
-			}
-
-			if ($location != '') {
-				header('HTTP/1.1 301 Moved Permanently');
-			 	header('Location: ' . $location);
-
-				exit;
-			}
-		}
-	}
-
-	public static function getServerHost() {
-		// return $_SERVER['SERVER_NAME'];
-		return $_SERVER['HTTP_HOST']; 
-	}
-
-	public static function implodeArray($array) {
-		return implode(SEO42_ARRAY_DELIMITER, $array); 
-	}
-
-	public static function startsWith($haystack, $needle) {
-		return $needle === "" || strpos($haystack, $needle) === 0;
-	}
-
-	public static function endsWith($haystack, $needle) {
-		return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
-	}
-
-	public static function isWebsiteUrlValid($url) {
-		if ($url != '' && $url != 'www.redaxo.org' && self::startsWith($url, 'http') && self::endsWith($url, '/')) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 }

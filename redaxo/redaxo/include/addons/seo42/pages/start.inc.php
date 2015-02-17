@@ -11,9 +11,5 @@
 	margin-top: 33px;
 	margin-bottom: 18px;
 }
-
-#rex-page-seo42 .rex-hl2 {
-	font-size: 1.2em;
-}
 </style>
 

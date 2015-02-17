@@ -11,12 +11,6 @@ echo seo42::getFullUrl(42);
 echo seo42::getMediaFile("image.png");
 // --> ' . seo42::getUrlStart() . $REX['MEDIA_DIR'] . '/image.png
 
-echo seo42::getMediaUrl("image.png");
-// --> ' . seo42::getMediaUrl('image.png') . '
-
-echo seo42::getAbsoluteMediaFile("image.png");
-// --> ' . seo42::getAbsoluteMediaFile('image.png') . '
-
 echo seo42::getDownloadFile("doc.pdf");
 // --> ' . seo42::getUrlStart() . seo42::downloadDir . '/doc.pdf
 ?>';
@@ -28,15 +22,13 @@ $codeExample2 = '
 <link rel="stylesheet" href="<?php echo seo42::getCSSFile("stuff.less", array("color" => "red", "base" => "960px")); ?>" type="text/css" media="screen" />
 <link rel="stylesheet" href="<?php echo seo42::getCSSFile("http://fonts.googleapis.com/css?family=Fjalla+One"); ?>" type="text/css" media="screen" />
 <link rel="stylesheet" href="<?php echo seo42::getResourceFile("resources/mediaelement/mediaelementplayer.css"); ?>" type="text/css" media="screen" />
-<link rel="shortcut icon" href="<?php echo seo42::getIconFile("favicon.ico"); ?>" />
+<link rel="shortcut icon" href="<?php echo seo42::getImageFile("favicon.ico"); ?>" type="image/x-icon" />
 
 <script type="text/javascript" src="<?php echo seo42::getCombinedJSFile("combined.js", array("jquery.magnific-popup.min.js", "jquery.nivo-slider.min.js")); ?>"></script>
 <script type="text/javascript" src="<?php echo seo42::getJSFile("http://codeorigin.jquery.com/jquery-2.0.3.min.js"); ?>"></script>
 <script type="text/javascript" src="<?php echo seo42::getResourceFile("resources/mediaelement/mediaelement-and-player.min.js"); ?>"></script>
 <script type="text/javascript" src="<?php echo seo42::getJSFile("init.js"); ?>"></script>
 <script type="text/javascript"><?php echo seo42::getJSCodeFromTemplate(5); ?></script>
-
-<img src="<?php echo seo42::getImageFile("logo.png"); ?>" />
 ';
 
 $codeExample3 = '<?php
@@ -82,7 +74,6 @@ $nav->setSelectedClass("current"); // ' . $I18N->msg('seo42_help_codeexamples_ex
 $nav->setActiveClass("current active"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_6a') . '
 $nav->setUlId("nav", 0); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_7') . '
 $nav->setUlClass("sf-menu", 0); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_8') . '
-$nav->setLiClass("list-item"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_8a') . '
 $nav->setLiIdFromMetaField("cat_css_id"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_9') . '
 $nav->setLiClassFromMetaField("cat_css_class"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_10') . '
 $nav->setLinkFromUserFunc(function($cat, $depth) { // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment5_11') . '
@@ -106,15 +97,6 @@ $nav->setLangUseLangCodeAsLinkText(true); // ' . $I18N->msg('seo42_help_codeexam
 $nav->setLangUpperCaseLinkText(true); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment6_7') . '
 
 echo $nav->getLangNavigation();
-
-// ' . $I18N->msg('seo42_help_codeexamples_ex6_comment7_1') . '
-$nav = new nav42();
-
-$nav->setBreadcrumbCssClass("breadcrumb"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment7_2') . '
-$nav->setBreadcrumbOlList(false); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment7_3') . '
-$nav->setBreadcrumbStartArticleName("<i class=\'fa fa-home\'></i>"); // ' . $I18N->msg('seo42_help_codeexamples_ex6_comment7_4') . '
-
-echo $nav->getBreadcrumbNavigation();
 ?>';
 
 $codeExample7 = '<?php
@@ -159,8 +141,6 @@ echo seo42_ex::getTitle(); // ' . $I18N->msg('seo42_help_codeexamples_ex7_commen
 $codeExample8 = '<?php echo seo42::getDebugInfo(); ?>';
 
 ?>
-
-<p><?php echo $I18N->msg('seo42_help_codeexamples_intro'); ?></p>
 
 <h2>1) <?php echo $I18N->msg('seo42_help_codeexamples_title1'); ?></h2>
 <p><?php echo $I18N->msg('seo42_help_codeexamples_description1'); ?></p>

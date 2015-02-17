@@ -1,13 +1,13 @@
 SEO42 AddOn für REDAXO 4.5+
 ===========================
 
-Ein intergalaktisches SEO-Addon für REDAXO 4.5+
+Ein intergalaktischer Fork des original RexSEO AddOns für REDAXO mit alternativer Benutzerführung und noch ein paar weiteren SEO-Goodies...
 
 Features
 --------
 
 * Generierung von suchmaschinenfreundlichen URLs (Apache Webserver benötigt Modul `mod_rewrite`)
-* Sauber eingestelltes Caching sowie Komprimierung für Resourcen wie Bildern, Fonts, CSS und JS Dateien (.htaccess)
+* Sauber eingestelltes Caching und GZipping von Resourcen wie Bildern, Fonts, CSS und JS Dateien (.htaccess)
 * Automatische Umschreibung der Startseite der Website in `/` (für alle Sprachen möglich)
 * Verschiedene URL-Endungen einstellbar (z.B. Endung `.html` oder `/`)
 * Automatische Titel-Generierung. Mitgeliefertes Titel-Schema aus [Google-PDF](http://www.google.de/webmasters/docs/einfuehrung-in-suchmaschinenoptimierung.pdf) entnommen.
@@ -27,11 +27,10 @@ Features
 * Automatische `rel="alternate"` Tags für mehrsprachige Websites
 * Option um die Indizierung von Seiten durch Suchmaschinen zu verhindern
 * Automatische sowie individuelle Canonical URLs
-* One Domain Only sowie Nicht-WWW zu WWW Umleitung (und umgekehrt) inkl. HTTPS Berücksichtigung.
+* Nicht-WWW zu WWW Umleitung (und umgekehrt). Lässt sich auch über das Setup aktivieren.
 * Smart Redirects: Automatische Umleitungen für falsch eingegebene Urls z.B. von Url-Endung `/` nach `.html`
-* No Double Content Redirects: Automatische Umleitungen für zusätzliche Domains um Double Content Probleme zu vermeiden
+* Weitere Einstellungen (vorerst) in der `settings.advanced.inc.php` und `settings.lang.inc.php`
 * Force Download Funktionalität inkl. suchmaschinenfreundlicher URLs und Canonical Header (z.B. für PDF Downloads)
-* Google Site Verification Unterstützung ohne dass man noch die Html-Datei uploaden muss
 * Keine Abhängigkeiten zu weiteren Addons wie Textile oder XForm
 * Kompatibel zum [Website Manager](https://github.com/RexDude/website_manager) sowie [Community](https://github.com/dergel/redaxo4_community) AddOn
 * Enthält die Antwort auf die eine Frage ;)
@@ -51,7 +50,7 @@ Features Navigationsausgabe (Klasse nav42)
 
 * Ausgabe der Navigation von einer Katagorie aus oder über Kategorie-Levels
 * Es wird zuerst eine nackte UL-Liste ohne Klassen oder Ids ausgegeben
-* Artikel (z.B. Home) können ausgeblendet werden
+* Startartikel der Website (z.B. Home) kann ausgeblendet werden
 * Einstellen der CSS-Klasse für selektierte Menüpunkte (z.B. `current`)
 * Jede UL kann eine Klasse und/oder ID zugewiesen bekommen (Suckerfish/Superfish)
 * Angabe von MetaInfo Felder aus denen Klassen und IDs für die LI's herausgezogen werden
@@ -59,7 +58,6 @@ Features Navigationsausgabe (Klasse nav42)
 * Unterstützung für alle URL-Typen von SEO42
 * Reagiert automatisch auf gesperrte Artikel etc. bei installiertem Community AddOn
 * Ausgabe einer einfachen Sprachnavigation möglich
-* Ausgabe einer Breadcrumb Navigation möglich
 * Codebeispiele in der Hilfe von SEO42
 
 Verfügbare Plugins für SEO42
@@ -67,7 +65,6 @@ Verfügbare Plugins für SEO42
 
 * [url_control](https://github.com/tbaddade/redaxo_plugin_url_control) - Plugin zur URL-Generierung für eigene AddOns
 * [lessdotphp](https://github.com/DanielWeitenauer/lessdotphp) - Less.php für SEO42 (Empfohlen für Bootstrap)
-* [min42](https://github.com/webghostx/min42) Minifizierung von CSS/JS Dateien
 
 Hinweis zur mitgelieferten .htaccess Datei
 ------------------------------------------
@@ -89,11 +86,24 @@ Entwicklung von Plugins für SEO42
 * Plugins sollten die SEO42 API verwendet. Aktuell gibt ein Übersicht der PHP-Methoden unter Hilfe > Debug.
 * Möchte man z.B. Titel, Beschreibung, usw. für einen bestimmten Artikel bekommen, so ruft man vor dem jeweiligen Methoden-Aufruf die Methode `seo42::initArticle($articleId)` auf. Zum Schluss sollte man wieder den aktuellen Artikel zurücksetzen mit `seo42::initArticle($REX['ARTICLE_ID'])` (aber eigentlich nur fürs Frontend nötig).
 
-Language Presets
-----------------
+Update von SEO42 2.x auf SEO42 2.6 und höher
+--------------------------------------------
 
-* ISO Language Codes: <http://www.w3schools.com/tags/ref_language_codes.asp>
-* Sprach-Sonderzeichen-Tabelle: <http://unicode.e-workers.de/>
+* AddOn-Ordner der alten Version löschen (vorher sichern!).
+* AddOn-Ordner der neuen Version einspielen.
+* SEO42 über die AddOn-Verwaltung von REDAXO reinstallieren.
+* AddOn-Einstellungen von Hand nachprüfen und ggf. korrigieren (`settings.lang.inc.php` hat ein neues Format!).
+* Ggf. Cache löschen.
+
+Update von REXSEO42 1.1/1.2 auf SEO42 2.x
+-----------------------------------------
+
+* In der `settings.advanced.inc.php` von REXSEO42 die Option `drop_dbfields_on_uninstall` auf `false` setzen.
+* REXSEO42 deinstallieren und AddOn-Ordner löschen.
+* SEO42 installieren.
+* In allen Templates den Klassennamen von `rexseo42` nach `seo42` umbenennen.
+* AddOn-Einstellungen von Hand nachprüfen und ggf. korrigieren (ab 2.6.0 hat die `settings.lang.inc.php` ein neues Format!).
+* Ggf. Cache löschen.
 
 Hinweise
 --------
@@ -106,6 +116,9 @@ Hinweise
 * Der Fehlerartikel unter REDAXO > System sollte nicht gleich dem Startartikel der Website entsprechen. Es sollte aufjedenfall ein eigener Fehlerartikel angelegt werden.
 * Implementiert man sein eigenes Titel-Schema, ist es vielleicht sinnvoll die Optionen `title_preview` und `no_prefix_checkbox` auf `false` zu setzen.
 * `$REX["MOD_REWRITE"]` braucht nicht mehr auf `true` gesetzt werden (z.B. über die System-Page von REDAXO). Wenn SEO42 aktiv, wird es automatisch gesetzt.
+* Eine hilfreiche Sprach-Sonderzeichen-Tabelle für die Ermittlung der Sonderzeichen-Umschreibungen für die `settings.lang.inc.php` findet man hier: <http://unicode.e-workers.de/>
+* Vorläufige Sammlung der Lang-Presets hier: <https://github.com/RexDude/seo42/issues/61>
+* Momentan muss man noch von Hand benötigte Einstellungen in den Dateien `settings.advanced.inc.php` und `settings.lang.inc.php` vornehmen. Danach sollte der Cache gelöscht werden.
 
 
 Hinweise Resourceneinbindung
@@ -120,30 +133,22 @@ Hinweise Resourceneinbindung
 Links
 -----
 
+* BugTracker: <https://github.com/RexDude/seo42/issues>
 * Klasse seo42: <https://github.com/RexDude/seo42/blob/master/classes/class.seo42.inc.php>
 * Klasse res42: <https://github.com/RexDude/seo42/blob/master/classes/class.res42.inc.php>
 * Klasse nav42: <https://github.com/RexDude/seo42/blob/master/classes/class.nav42.inc.php>
-* Online JavaScript/CSS Compression Using YUI Compressor: <http://gpbmike.github.io/refresh-sf/>
+* Online JavaScript/CSS Compression Using YUI Compressor: <http://refresh-sf.com/yui/>
 
-Artikel/Tutorials
------------------
-
-* REDAXO Tutorial: [SEO-AddOns - URL-Umschreibung und (viel) mehr](http://www.redaxo.org/de/doku/tutorials/seo-addons---urls-und-mehr/)
-
-Changelog
----------
-
-siehe [CHANGELOG.md](CHANGELOG.md)
-
-Updatehinweise
---------------
-
-siehe [UPDATE.md](UPDATE.md)
 
 FAQ
 ---
 
 siehe [FAQ.md](FAQ.md)
+
+Changelog
+---------
+
+siehe [CHANGELOG.md](CHANGELOG.md)
 
 Lizenz
 ------
@@ -153,8 +158,8 @@ siehe [LICENSE.md](LICENSE.md)
 Credits
 -------
 
-* [GN2](https://github.com/gn2netwerk) und [jdlx](https://github.com/jdlx) für RexSEO
-* [Markus Staab](https://github.com/staabm) für url_rewrite
+* [GN2](https://github.com/gn2netwerk) und [jdlx](https://github.com/jdlx) für das original RexSEO AddOn
+* [Markus Staab](https://github.com/staabm) für das zugrundeliegende url_rewrite AddOn
 * [Jan Kristinus](http://github.com/dergel) für REDAXO und den neuen EP in REDAXO 4.5
 * [Gregor Harlan](https://github.com/gharlan) und [Thomas Blum](https://github.com/tbaddade) für Hilfe, Code und Bugmeldungen :)
 * [Peter Bickel](https://github.com/polarpixel) für generelle Unterstützung und die Hilfe bei der englischen Übersetzung
@@ -165,9 +170,7 @@ Credits
 * SEO42 nutzt die [scssphp](https://github.com/leafo/scssphp/) PHP-Klasse
 * SEO42 nutzt die [lessphp](https://github.com/leafo/lessphp/) PHP-klasse
 * [QTip2](http://qtip2.com/) by Craig Thompson
-* [jQuery-tagEditor](https://github.com/Pixabay/jQuery-tagEditor) by Pixabay.com
 * jQuery UI: <http://jqueryui.com/>
-* jQuery Bootstrap-style Dropdowns: <https://github.com/claviska/jquery-dropdown>
 * Hitchhiker's Guide to the Galaxy Icons by [Iconshock](http://www.iconarchive.com/artist/iconshock.html)
 * Status Icons from [FamFamFam Silk Icons](http://www.famfamfam.com/lab/icons/silk/) and [Oxygen Icons](http://www.oxygen-icons.org/)
 * Macht’s gut und danke für den Fisch ;)

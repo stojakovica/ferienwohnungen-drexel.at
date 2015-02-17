@@ -1,7 +1,7 @@
 <?php
 $ssa = OOArticle::getSiteStartArticle();
 $curArticle = OOArticle::getArticleById($this->article_id);
-$isContact = $curArticle->getId()==7;
+$isContact = $curArticle->getId()==6;
 $headerImages = array_filter(explode(',', getHierarchicalVar('art_header_images', $curArticle, $ssa)));
 ?>
 <!DOCTYPE html>
@@ -110,7 +110,7 @@ else {
                 $nav = new nav42();
                 $nav->setLevelDepth(1);
                 $nav->setUlClass("list-inline", 0);
-                echo $nav->getNavigationByCategory(8);
+                echo $nav->getNavigationByCategory(7);
                 ?>
             </div>
         </div>
@@ -123,5 +123,4 @@ else {
 <script src="<?php echo seo42::getJSFile('slimbox2.js'); ?>"></script>
 <script src="<?php echo seo42::getJSFile('main.js'); ?>"></script>
 </body>
-
 </html>

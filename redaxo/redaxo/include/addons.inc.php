@@ -48,6 +48,9 @@ $REX['ADDON']['status']['rex_multiupload'] = '1';
 $REX['ADDON']['install']['seo42'] = '1';
 $REX['ADDON']['status']['seo42'] = '1';
 
+$REX['ADDON']['install']['string_table'] = '1';
+$REX['ADDON']['status']['string_table'] = '1';
+
 $REX['ADDON']['install']['textile'] = '1';
 $REX['ADDON']['status']['textile'] = '1';
 

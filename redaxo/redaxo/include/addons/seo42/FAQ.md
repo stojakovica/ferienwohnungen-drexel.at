@@ -7,22 +7,10 @@ Mein Webserver meldet einen 500 Server Error?!
 Vermutlich liegt es an der Zeile `Options -Indexes` in der .htaccess Datei. Einfach diese Zeile auskommentieren.
 
 
-Warum wird meine Website umgeleitet auf eine andere URL?
---------------------------------------------------------
-
-Standardmäßig ist ein Redirect auf die im Setup angegebene URL der Website eingestellt um Double Content zu vermeiden. Prüfen Sie diesen Wert auf Richtigkeit oder schalten Sie die No Double Content Redirects auf einen anderen Wert um.
-
-
 Meine CSS Dateien werden nicht geladen?!
 ----------------------------------------
 
 Stellen Sie sicher, dass der Base-Tag sich an oberster Stelle in Head-Bereich Ihrer Website befindet. Bei REDAXO-Unterordner-Installationen zusätzlich drauf achten, die URLs nicht mit / zu beginnen bzw. einfach Codebeispiele 2 nutzen!
-
-
-Warum hat das Umschalten von $REX['MOD_REWRITE'] keine Wirkung?
----------------------------------------------------------------
-
-SEO42 funktioniert mittlerweile unabhängig von dieser REDAXO Variable. Will man den Rewriter ausschalten gibt es da eine Einstellung "URLs umschreiben" unter "Rewriter" die man nutzen kann.
 
 
 Warum funktioniert nach Installation von SEO42 die Suche mittels RexSearch nicht mehr?
@@ -44,12 +32,6 @@ Warum bekomme ich einen Fehler bei der Einbindung von Bootstrap?
 Bootstrap nutzt einige speziellen Funktionen die lesphp von leafo nicht versteht. Um das Problem zu Lösen muss das Plugin [lessdotphp](https://github.com/DanielWeitenauer/lessdotphp) installiert werden
 
 
-Wie werden die Standardeinstellungen von SEO42 wiederhergestellt?
-------------------------------------------------------------------
-
-Bitte die Datei `/include/data/addons/seo42/settings.inc.php` löschen und das REDAXO Backend aufrufen. Achtung: alle geänderten Einstellungen gehen dabei verloren.
-
-
 Warum soll man mit seo42::getCSSFile() und seo42::getJSFile() seine CSS/JS Dateien ausgeben lassen?
 ---------------------------------------------------------------------------------------------------
 
@@ -62,12 +44,6 @@ Wie muss die URL der Website im Setup genau angegeben werden?
 Die URL der Website muss mit `http://` beginnen und mit einem `/` enden.
 
 
-Gibt es ein Tutorial zu SEO42 und/oder weitere Informationen zu den Features des Addons?
-----------------------------------------------------------------------
-
-Ja :) [REDAXO Tutorial: SEO-AddOns - URL-Umschreibung und mehr](http://www.redaxo.org/de/doku/tutorials/seo-addons---urls-und-mehr/)
-
-
 Wenn ich Links mit Anchors nutze, lande ich immer auf der Startseite?
 ---------------------------------------------------------------------
 
@@ -77,7 +53,7 @@ Entweder vollständige Links inkl. vorangestelltem Artikel benutzen, z.B. `redax
 Wo legt SEO42 die Backups für die .htaccess Dateien an?
 -------------------------------------------------------
 
-Im Data-Ordner von REDAXO: `/redaxo/include/data/addons/seo42/backup/`
+Im Backup-Verzeichnis des AddOns: `/seo42/backup/`
 
 
 Warum kann kann man keine globalen Descriptions und Keywords eintragen, die dann für alle Seiten gültig sind?
@@ -95,7 +71,7 @@ Cache löschen, AddOn reinstallieren und evtl. das Setup neu durchlaufen sind hi
 Ich möchte das Trennzeichen im Titel umstellen. Wo kann ich das machen?
 -----------------------------------------------------------------------
 
-Unter Einstellungen wird dies vorgenommen. Option heißt `title_delimiter`.
+Der zuständige Parameter heißt `title_delimiter` und ist in der `settings.advanced.inc.php` einstellbar.
 
 
 Wie kann ich den Titel sonst noch beinflussen?
@@ -116,6 +92,12 @@ Wo bekomme ich eigentlich eine gute verständliche Einführung in das Thema "Suc
 Zum Beispiel hier: <http://www.google.de/webmasters/docs/einfuehrung-in-suchmaschinenoptimierung.pdf>
 
 
+Wo sind eigentlich all die restlichen Einstellungen von RexSEO abgeblieben?
+---------------------------------------------------------------------------
+
+Vorläufig wurden diese hier ausgelagert: `settings.advanced.inc.php`
+
+
 Wie kann ich suchmaschinenfreundliche URLs für Bilder erhalten, die über den Image Manager generiert wurden?
 ------------------------------------------------------------------------------------------------------------
 
@@ -125,13 +107,13 @@ Zum Beispiel über die Methode `seo42::getImageManagerFile()`. Siehe dazu Codebe
 Ich möchte nicht-www Anfragen auf die www Variante umleiten lassen. Soll doch SEO-technisch gut sein, oder?
 -----------------------------------------------------------------------------------------------------------
 
-Yup. Dafür gibt es mittlerweile die No Double Content Redirects die sich über die Einstellungen-Seite aktivieren lassen.
+Yup. In der .htaccess die entsprechenden Zeilen un-auskommentieren bzw. über Setup Schritt 2 automatisch machen lassen.
 
 
 Meine URLs haben sich geändert. Wie kann ich saubere Weiterleitungen hinbekommen?
 ---------------------------------------------------------------------------------
 
-Dies ist mittlerweile über die Redirects-Seite möglich. Bitte Urls immer mit einem Slash beginnen, die Ziel Url kann aber auch mit http:// beginnen. Schauen Sie sich auch die weiteren Redirects Möglichkeiten in den Einstellungen an.
+Dies ist mittlerweile über die Redirects-Seite möglich. Bitte Urls immer mit einem Slash beginnen, die Ziel Url kann aber auch mit http:// beginnen.
 
 
 Habe gehört das es SEO-technisch gut wäre wenn Bilder ein Alt-Attribut zugewiesen bekommen?

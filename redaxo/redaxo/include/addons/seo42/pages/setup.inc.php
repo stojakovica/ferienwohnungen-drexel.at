@@ -11,12 +11,21 @@ $codeExample = '<!DOCTYPE html>
 	<meta name="robots" content="<?php echo seo42::getRobotRules();?>" />
 	<link rel="stylesheet" href="<?php echo seo42::getCSSFile("default.css"); ?>" type="text/css" media="screen,print" />
 	<link rel="stylesheet" href="<?php echo seo42::getCSSFile("print.css"); ?>" type="text/css" media="print" />
+	<link rel="shortcut icon" href="<?php echo seo42::getImageFile("favicon.ico"); ?>" type="image/x-icon" />
 	<link rel="canonical" href="<?php echo seo42::getCanonicalUrl(); ?>" />
 	<?php echo seo42::getLangTags(); ?>
 </head>
 
 <body>
-
+<div id="container">
+	<div id="link"><a href="<?php echo rex_getUrl(1); ?>">' . $I18N->msg('seo42_setup_codeexamples_goto_startpage') . '</a></div>
+	<div id="media"><img src="<?php echo seo42::getMediaFile("logo.png"); ?>" alt="" /></div>
+	<div id="imagetype"><img src="<?php echo seo42::getImageManagerFile("pic.png", "my_img_type"); ?>" alt="" /></div>
+	<div id="mainmenu"><?php $mainNav = new nav42(); echo $mainNav->getNavigationByLevel(0); ?></div>
+	<div id="submenu"><?php $subNav = new nav42(); echo $subNav->getNavigationByLevel(1); ?></div>
+	<div id="content"><?php echo $this->getArticle(); ?></div>
+	<div id="footer"><?php $footerNav = new nav42(); echo $footerNav->getNavigationByCategory(42); ?></div>
+</div>
 <script type="text/javascript" src="<?php echo seo42::getJSFile("jquery.min.js"); ?>"></script>
 <script type="text/javascript" src="<?php echo seo42::getJSFile("init.js"); ?>"></script>
 </body>
@@ -28,7 +37,7 @@ $chapter = rex_request('chapter', 'string');
 $func = rex_request('func', 'string');
 
 $htaccessRoot = $REX['FRONTEND_PATH'] . '/.htaccess';
-$backupPathRoot = SEO42_BACKUP_DIR;
+$backupPathRoot = $REX['INCLUDE_PATH'] . '/addons/seo42/backup/';
 
 if (isset($REX['WEBSITE_MANAGER'])) {
 	$wmDisabled = ' disabled="disabled"';
@@ -48,19 +57,12 @@ if ($func == "do_copy") {
 	if (file_exists($htaccessRoot)) {
 		$htaccessFileExists = true;
 
-		$msg = seo42_utils::checkDir($backupPathRoot);
-
-		if ($msg != '') {
-			echo rex_warning($msg);
-			$doCopy = false;
+		if (copy($htaccessRoot, $backupPathRoot . $htaccessBackupFile)) {
+			$doCopy = true;
 		} else {
-			if (copy($htaccessRoot, $backupPathRoot . $htaccessBackupFile)) {
-				$doCopy = true;
-			} else {
-				rex_warning($I18N->msg('seo42_setup_file_backup_failed', $htaccessRoot));
-				$doCopy = false;
-			}
-		}
+			rex_warning($I18N->msg('seo42_setup_file_backup_failed', $htaccessRoot));
+			$doCopy = false;
+		} 
 	}
 
 	// then copy if backup was successful
@@ -83,8 +85,25 @@ if ($func == "do_copy") {
 		echo rex_warning($I18N->msg('seo42_setup_backup_failed'));
 	}
 
-	if ($copySuccessful && (rex_request('modify_rewritebase', 'int') == 1 || rex_request('directory_listing', 'int') == 1)) {
+	if ($copySuccessful && (rex_request('www_redirect', 'int') == 1 || rex_request('modify_rewritebase', 'int') == 1 || rex_request('directory_listing', 'int') == 1)) {
 		$content = rex_get_file_contents($htaccessRoot);
+
+		// this is for non-ww to www redirect
+		if (rex_request('www_redirect', 'int') == 1) {
+			if (seo42::isWwwServerUrl()) {
+				$wwwRedirect1 = '#RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$';
+				$wwwRedirect2 = '#RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [L,R=301]';
+	
+				$content = str_replace($wwwRedirect1, ltrim($wwwRedirect1, '#'), $content);
+				$content = str_replace($wwwRedirect2, ltrim($wwwRedirect2, '#'), $content);
+			} else {
+				$wwwRedirect1 = '#RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]';
+				$wwwRedirect2 = '#RewriteRule ^(.*)$ http://%1/$1 [R=301,L]';
+	
+				$content = str_replace($wwwRedirect1, ltrim($wwwRedirect1, '#'), $content);
+				$content = str_replace($wwwRedirect2, ltrim($wwwRedirect2, '#'), $content);
+			}
+		}
 
 		// this is for subdir installations  
 		if (rex_request('modify_rewritebase', 'int') == 1) {
@@ -159,9 +178,9 @@ if ($func == "do_copy") {
 				<span class="url-hint"><?php echo $I18N->msg('seo42_setup_url_alert'); ?></span>
 			</p>
 			
-			<p class="rex-form-col-a rex-form-read lang-settings">
+			<p class="rex-form-col-a rex-form-read">
 				<label for="lang_hint"><?php echo $I18N->msg('seo42_settings_lang_hint'); ?></label>
-				<?php echo seo42_utils::getLangSettingsMsg(); ?>
+				<?php echo seo42_utils::getLangSettingsFile(); ?>
 			</p>
 
 			<input type="hidden" name="page" value="seo42" />
@@ -191,6 +210,11 @@ if ($func == "do_copy") {
 			<?php } ?>
 
 			<p class="rex-form-checkbox rex-form-label-right"> 
+				<input type="checkbox" value="1" id="www_redirect" name="www_redirect" />
+				<label for="www_redirect"><?php if (seo42::isWwwServerUrl()) { echo $I18N->msg('seo42_setup_www_redirect_checkbox'); } else { echo $I18N->msg('seo42_setup_non_www_redirect_checkbox'); } echo  ' <span>' . $I18N->msg('seo42_setup_recommended') . '</span>'; ?></label>
+			</p>
+
+			<p class="rex-form-checkbox rex-form-label-right"> 
 				<input type="checkbox" value="1" id="directory_listing" name="directory_listing" />
 				<label for="directory_listing"><?php echo $I18N->msg('seo42_setup_directory_listing_checkbox') . ' <span>' . $I18N->msg('seo42_setup_recommended') . '</span>'; ?></label>
 				<span id="directory_listing_hint" title="<?php echo $I18N->msg('seo42_setup_directory_listing_alert'); ?>" class="seo42-tooltip status exclamation">&nbsp;</span>
@@ -199,7 +223,6 @@ if ($func == "do_copy") {
 			<input type="hidden" name="page" value="seo42" />
 			<input type="hidden" name="subpage" value="setup" />
 			<input type="hidden" name="func" value="do_copy" />
-			<div class="spacer small"></div>
 			<div class="rex-form-row">
 				<p class="button"><input type="submit" class="rex-form-submit" name="sendit" id="copy-file-submit" value="<?php echo $I18N->msg('seo42_setup_step2_button'); ?>" /></p>
 			</div>
@@ -238,10 +261,6 @@ if ($func == "do_copy") {
 
 #rex-page-seo42 .spacer {
 	height: 10px;
-}
-
-#rex-page-seo42 .spacer.small {
-	height: 5px;
 }
 
 #rex-page-seo42 .info-msg {
@@ -289,6 +308,10 @@ if ($func == "do_copy") {
 	margin-top: 10px;
 }
 
+#rex-page-seo42 #www_redirect {
+    margin-top: 8px;
+}
+
 #rex-page-seo42 #directory_listing {
     margin-top: 8px;
 }
@@ -300,14 +323,6 @@ if ($func == "do_copy") {
 
 .rex-form-checkbox label span {
 	font-size: 10px;
-}
-
-#rex-page-seo42 .lang-settings span.status.exclamation {
-	background-position: left -80px;
-}
-
-#rex-page-seo42 .rex-hl2 {
-	font-size: 1.2em;
 }
 </style>
 

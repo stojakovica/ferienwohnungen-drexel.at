@@ -25,14 +25,14 @@ if (!$REX['GG']) {
 // Setupservicestatus - if everything ok -> false; if problem set to true;
 $REX['SETUP'] = false;
 $REX['SERVER'] = 'http://localhost/ferienwohnungen-drexel.at/REDAXO/';
-$REX['SERVERNAME'] = 'REDAXO';
+$REX['SERVERNAME'] = 'Ferienwohnungen Drexel';
 $REX['VERSION'] = "4";
 $REX['SUBVERSION'] = "6";
 $REX['MINORVERSION'] = "1";
-$REX['ERROR_EMAIL'] = '';
+$REX['ERROR_EMAIL'] = 'aleksandar.stojakovic@s-now.at';
 $REX['FILEPERM'] = octdec(664); // oktaler wert
 $REX['DIRPERM'] = octdec(775); // oktaler wert
-$REX['INSTNAME'] = 'rex20141212142444';
+$REX['INSTNAME'] = 'rex20141011141327';
 $REX['SESSION_DURATION'] = 7200;
 
 // Is set first time SQL Object ist initialised
@@ -48,7 +48,7 @@ $REX['NOTFOUND_ARTICLE_ID'] = 1;
 $REX['START_CLANG_ID'] = 0;
 
 // default template id, if > 0 used as default, else template_id determined by inheritance
-$REX['DEFAULT_TEMPLATE_ID'] = 0;
+$REX['DEFAULT_TEMPLATE_ID'] = 1;
 
 // default language
 $REX['LANG'] = 'de_de';

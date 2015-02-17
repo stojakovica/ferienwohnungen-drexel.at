@@ -3,7 +3,7 @@
 // register addon
 $REX['ADDON']['rxid']['seo42'] = '0';
 $REX['ADDON']['name']['seo42'] = 'SEO42';
-$REX['ADDON']['version']['seo42'] = '4.1.0';
+$REX['ADDON']['version']['seo42'] = '3.4.0';
 $REX['ADDON']['author']['seo42'] = 'Markus Staab, Wolfgang Huttegger, Dave Holloway, Jan Kristinus, jdlx, RexDude';
 $REX['ADDON']['supportpage']['seo42'] = 'forum.redaxo.de';
 $REX['ADDON']['perm']['seo42'] = 'seo42[]';
@@ -16,133 +16,24 @@ $REX['EXTPERM'][] = 'seo42[seo_default]';
 $REX['EXTPERM'][] = 'seo42[seo_extended]';
 $REX['EXTPERM'][] = 'seo42[url_default]';
 
-// append lang file
-if ($REX['REDAXO']) {
-	$I18N->appendFile($REX['INCLUDE_PATH'] . '/addons/seo42/lang/');
-}
-
 // includes
 require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.res42.inc.php');
 require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.nav42.inc.php');
 require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.seo42.inc.php');
 require_once($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.seo42_utils.inc.php');
+require_once($REX['INCLUDE_PATH'] . '/addons/seo42/settings.dyn.inc.php');
+require_once($REX['INCLUDE_PATH'] . '/addons/seo42/settings.advanced.inc.php');
+require_once($REX['INCLUDE_PATH'] . '/addons/seo42/settings.lang.inc.php');
 
-// consts
-define('SEO42_ARRAY_DELIMITER', ',');
-define('SEO42_DATA_DIR', $REX['INCLUDE_PATH'] . '/data/addons/seo42/');
-define('SEO42_BACKUP_DIR', $REX['INCLUDE_PATH'] . '/data/addons/seo42/backup/');
-define('SEO42_PATHLIST', $REX['GENERATED_PATH'] . '/files/seo42_pathlist.php');
-
-define('SEO42_URL_TYPE_DEFAULT', 0); 
-define('SEO42_URL_TYPE_INTERN_REPLACE_CLANG', 1); 
-define('SEO42_URL_TYPE_USERDEF_INTERN', 2);
-define('SEO42_URL_TYPE_MEDIAPOOL', 3);
-define('SEO42_URL_TYPE_LANGSWITCH', 4); // should also be handled by navigation output.
-define('SEO42_URL_TYPE_NONE', 5); // should also be handled by navigation output.
-define('SEO42_URL_TYPE_REMOVE_ROOT_CAT', 6);
-define('SEO42_URL_TYPE_INTERN_REPLACE', 7);
-define('SEO42_URL_TYPE_CALL_FUNC', 8); // should also be handled by navigation output.
-define('SEO42_URL_TYPE_USERDEF_EXTERN', 9);
-
-define('SEO42_REWRITEMODE_SPECIAL_CHARS', 0);
-define('SEO42_REWRITEMODE_URLENCODE', 1);
-define('SEO42_REWRITEMODE_INHERIT', 2);
-
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_NONE', 0);
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_ONE_DOMAIN_ONLY', 1);
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_NON_WWW_TO_WWW', 2);
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_WWW_TO_NON_WWW', 3);
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_ONLY_HTTPS', 4);
-
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_AVAILABILITY_FRONTEND_BACKEND', 0);
-define('SEO42_NO_DOUBLE_CONTENT_REDIRECT_AVAILABILITY_FRONTEND', 1);
-
-define('SEO42_AUTO_REDIRECT_NONE', 0);
-define('SEO42_AUTO_REDIRECT_ARTICLE_ID', 1);
-define('SEO42_AUTO_REDIRECT_URL_REWRITE', 2);
-define('SEO42_AUTO_REDIRECT_URL_REWRITE_R3', 3);
-
-// default settings (user settings are saved in data dir!)
-$REX['ADDON']['seo42']['settings'] = array(
-	'rewriter' => true,
-	'url_ending' => '.html',
-	'hide_langslug' => 0,
-	'homeurl' => 2,
-	'homelang' => 0,
-	'no_double_content_redirects' => SEO42_NO_DOUBLE_CONTENT_REDIRECT_ONE_DOMAIN_ONLY,
-	'no_double_content_redirects_availability' => SEO42_NO_DOUBLE_CONTENT_REDIRECT_AVAILABILITY_FRONTEND,
-	'auto_redirects' => SEO42_AUTO_REDIRECT_NONE,
-	'smart_redirects' => true,
-	'redirects_allow_regex' => false,
-	'css_dir' => '/resources/css/',
-	'js_dir' => '/resources/js/',
-	'images_dir' => '/resources/images/',
-	'icons_dir' => '/resources/icons/',
-	'seo_friendly_image_manager_urls' => true,
-	'full_urls' => false,
-	'allow_article_id' => false,
-	'ignore_root_cats' => false,
-	'url_whitespace_replace' => '-',
-	'url_start' => '/',
-	'url_start_subdir' => './',
-	'remove_root_cats_for_categories' => array(),
-	'no_url_for_categories' => array(),
-	'include_query_params' => true,
-	'ignore_query_params' => array(),
-	'force_download_for_filetypes' => array(),
-	'send_header_x_ua_compatible' => true,
-	'fix_image_manager_cache_control_header' => false,
-	'static_sitemap_priority' => true,
-	'no_robots_txt_auto_disallow' => true,
-	'robots' => '',
-	'google_site_verification_filename' => '',
-	'robots_follow_flag' => 'follow',
-	'robots_archive_flag' => 'noarchive',
-	'title_delimiter' => '-',
-	'seopage' => true,
-	'title_preview' => true,
-	'no_prefix_checkbox' => false,
-	'custom_canonical_url' => false,
-	'noindex_checkbox' => false,
-	'urlpage' => true,
-	'all_url_types' => true,
-	'pagerank_checker' => true,
-	'redirects' => true,
-	'one_page_mode' => false,
-	'pagerank_checker_unlock' => false,
-	'global_special_chars' => '',
-	'global_special_chars_rewrite' => '',
-	'urlencode_whitespace_replace' => '_',
-	'urlencode_lowercase' => false,
-	'lang' => array(
-		0 => array(
-			'code' => 'de',
-			'original_name' => 'deutsch',
-			'rewrite_mode' => SEO42_REWRITEMODE_SPECIAL_CHARS,
-			'special_chars' => 'Ä|ä|Ö|ö|Ü|ü|ß|&',
-			'special_chars_rewrite' => 'Ae|ae|Oe|oe|Ue|ue|ss|und',
-			'inherit_from_clang' => 0
-		)
-	)
-);
-
-// overwrite default settings with user settings
-seo42_utils::includeSettingsFile();
-
-// include cached redirects
-seo42_utils::includeRedirectsFile();
-
-// pre init seo42 vars
-seo42::init();
+// robots settings (can be different when website manager is installed)
+seo42_utils::includeRobotsSettings();
 
 // fix for iis webserver: set request uri manually if not available
 seo42_utils::requestUriFix();
 
-// do redirects
-seo42_utils::noDoubleContentRedirect();
-
+// do redirect for frontend if necessary
 if (!$REX['REDAXO']) {
-	seo42_utils::redirect();	
+	seo42_utils::redirect();
 }
 
 // init
@@ -161,14 +52,14 @@ if (!$REX['SETUP']) {
 	// init seo42
 	rex_register_extension('ADDONS_INCLUDED', 'seo42_utils::init', '', REX_EXTENSION_EARLY);
 
-	// init res42
-	rex_register_extension('ADDONS_INCLUDED', 'res42::init');
-
 	// send additional headers if necessary
 	rex_register_extension('OUTPUT_FILTER_CACHE', 'seo42_utils::sendHeaders');
 }
 
 if ($REX['REDAXO']) {
+	// append lang file
+	$I18N->appendFile($REX['INCLUDE_PATH'] . '/addons/seo42/lang/');
+
 	// handels ajax request for google pagerank checker in tools section
 	if ($REX['ADDON']['seo42']['settings']['pagerank_checker'] && isset($REX['USER']) && rex_request('function') == 'getpagerank') {
 		require($REX['INCLUDE_PATH'] . '/addons/seo42/classes/class.google_pagerank_checker.inc.php');
@@ -194,14 +85,9 @@ if ($REX['REDAXO']) {
 		// add subpages
 		$REX['ADDON']['seo42']['SUBPAGES'] = array(
 			array('', $I18N->msg('seo42_start')),
-			array('tools', $I18N->msg('seo42_tools'))
+			array('tools', $I18N->msg('seo42_tools')),
+			array('redirects', $I18N->msg('seo42_redirects'))
 		);
-
-		if ($REX['ADDON']['seo42']['settings']['redirects']) {
-			array_push($REX['ADDON']['seo42']['SUBPAGES'], 
-				array('redirects', $I18N->msg('seo42_redirects'))
-			);
-		}
 
 		// plugins (will be autoloaded incl. language file)
 		$plugins = OOPlugin::getAvailablePlugins('seo42');
@@ -280,6 +166,9 @@ if ($REX['REDAXO']) {
 		rex_register_extension('CAT_ADDED', 'seo42_utils::addNoUrlType');
 	}
 } else {
+	// init res42 class
+	rex_register_extension('ADDONS_INCLUDED', 'res42::init');
+
 	// send additional headers for article if necessary
 	rex_register_extension('OUTPUT_FILTER_CACHE', 'seo42_utils::sendHeadersForArticleOnly');
 

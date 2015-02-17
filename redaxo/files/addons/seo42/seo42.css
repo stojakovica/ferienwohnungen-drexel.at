@@ -37,11 +37,6 @@
 	margin-left: 5px;
 }
 
-#rex-page-seo42 span.status.right {
-	float: right;
-	margin-right: 5px;
-}
-
 #rex-page-seo42 span.status.success {
 	background-position: left top;	
 }
@@ -52,10 +47,6 @@
 
 #rex-page-seo42 span.status.exclamation {
 	background-position: left -78px;	
-}
-
-#rex-page-seo42 span.status.information {
-	background-position: left -60px;	
 }
 
 /* --------------------------------------------------------------------- */
@@ -76,25 +67,5 @@
 	#rex-page-seo42.be-style-agk-skin div#rex-title h1 {
 		padding-left: 0 !important;
 	}
-}
-
-/* --------------------------------------------------------------------- */
-
-.tags {
-	display: none;
-}
-
-.tag-editor {
-	width: 456px !important;
-	border: 1px solid #999 !important;
-}
-
-.tag-editor input {
-	-moz-transition: none !important;
-	border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    padding: 0 !important;
 }
 

@@ -1,14 +1,15 @@
 <?php
 global $REX;
 
-if (rex_request('seo42_func')!='')
+if (rex_request('rexseo_func')!='')
 {
+  $path = $REX['INCLUDE_PATH'].'/addons/rexseo';
 
-  switch (rex_request('seo42_func'))
+  switch (rex_request('rexseo_func'))
   {
     case 'sitemap':
-      require_once $REX['INCLUDE_PATH'].'/addons/seo42/classes/class.seo42_sitemap.inc.php';
-      $map = new seo42_sitemap();
+      require_once $REX['INCLUDE_PATH'].'/addons/seo42/classes/class.rexseo_sitemap.inc.php';
+      $map = new rexseo_sitemap;
 
       switch(rex_request('mode'))
       {
@@ -25,9 +26,9 @@ if (rex_request('seo42_func')!='')
 
 
   case 'robots':
-      require_once $REX['INCLUDE_PATH'].'/addons/seo42/classes/class.seo42_robots.inc.php';
+      require_once $REX['INCLUDE_PATH'].'/addons/seo42/classes/class.rexseo_robots.inc.php';
 
-      $robots = new seo42_robots();
+      $robots = new rexseo_robots;
       $robots->setContent($REX['ADDON']['seo42']['settings']['robots']);
       $robots->addSitemapLink();
       $robots->send();
@@ -63,20 +64,6 @@ if (rex_request('seo42_func')!='')
 			}
 		}
 		break;
-
-	case 'googlesiteverification':
-		$googleSiteVerificationFile = strtolower(preg_replace("/[^a-zA-Z0-9.\-\$\+]/","_", trim(trim($REX['ADDON']['seo42']['settings']['google_site_verification_filename']), '/')));
-		$requestedFile = strtolower(preg_replace("/[^a-zA-Z0-9.\-\$\+]/","_", trim($_SERVER['REQUEST_URI'], '/')));
-
-		if ($googleSiteVerificationFile != '' && $requestedFile == $googleSiteVerificationFile) {
-			ob_clean();
-			flush();
-
-			echo 'google-site-verification: ' . $googleSiteVerificationFile;
-			exit;
-		}
-    break;
-
 	default:
 		break;
 

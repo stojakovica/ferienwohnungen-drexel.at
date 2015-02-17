@@ -306,6 +306,11 @@ class seo42 {
 		return '<img src="' . $url . '" width="' . $imgWidth . '" height="' . $imgHeight . '" alt="' . $altAttribute . '" />';
 	}
 
+	public static function getImageManagerUrl($imageFile, $imageType) {
+		// seo42::getImageManagerUrl() is deprecated! use seo42::getImageManagerFile().
+		return self::getImageManagerFile($imageFile, $imageType);
+	}
+
 	public static function getImageManagerFile($imageFile, $imageType) {
 		global $REX;
 	
@@ -631,23 +636,25 @@ class seo42 {
 		$out .= seo42_utils::print_r_pretty($REX['ADDON']['seo42']['settings'], true);
 		$out .= '</pre>';
 
-		// cached redirects
-		$out .= '<h2>Cached Redirects</h2>';
-
-		$out .= '<pre class="rex-code">';
-		$out .= seo42_utils::print_r_pretty($REX['SEO42_CACHED_REDIRECTS'], true);
-		$out .= '</pre>';
-
 		// pathlist
 		$out .= '<h2>Pathlist</h2>';
 
-		$pathlistRoot = SEO42_PATHLIST;
+		$pathlistRoot = REXSEO_PATHLIST;
 
 		if (file_exists($pathlistRoot)) {
 			$content = rex_get_file_contents($pathlistRoot);
 			$out .= rex_highlight_string($content, true);
 		} else {
 			$out .= 'File not found: ' . $pathlistRoot;
+		}
+
+		// redirects
+		$redirectsRoot = seo42_utils::getRedirectsFile();
+
+		if (file_exists($redirectsRoot)) {
+			$out .= '<h2>Redirects</h2>';
+			$content = rex_get_file_contents($redirectsRoot);
+			$out .= rex_highlight_string($content, true);
 		}
 
 		// .htaccess
@@ -794,7 +801,7 @@ class seo42 {
 	public static function getUrlString($string) {
 		global $REX;
 	
-		return strtolower(seo42_parse_article_name($string, $REX['ARTICLE_ID'], $REX['CUR_CLANG']));
+		return strtolower(rexseo_parse_article_name($string, $REX['ARTICLE_ID'], $REX['CUR_CLANG']));
 	}
 
 	public static function getCSSFile($file, $vars = array()) {
@@ -807,14 +814,6 @@ class seo42 {
 
 	public static function getImageFile($file) {
 		return res42::getImageFile($file);
-	}
-
-	public static function getAbsoluteImageFile($file) {
-		return res42::getAbsoluteImageFile($file);
-	}
-
-	public static function getIconFile($file) {
-		return res42::getIconFile($file);
 	}
 
 	public static function getResourceFile($fileWithPath) {

@@ -1,63 +1,6 @@
 SEO42 - Changelog
 =================
 
-### Version 4.1.0 - 03. Dezember 2014
-
-* Update: Bitte die Hinweise in der `UPDATE.md` beachten!
-* Fixed #155: Kombination One Page Mode + Mehrsprachigkeit führte in der Sitemap.xml zu einem fehlerhaften Eintrag, thx@TobiasKrais
-* Fixed #156: Bei Benutzung von `rex_redirect()` gab es Probleme mit den Query Parametern, thx@Sysix
-* Fixed #158: Mime Types für Fonts verbessert, Chrome meldete sonst "Resource interpreted as font but transferred with MIME type x-font/woff", thx@TobiasKrais
-* Neu: Ausgabe einer Breadcrumb Navigation möglich, siehe Codebeispiele, thx@webghostx
-* Neu: Google Site Verification Unterstützung: über die Webmaster Tools den Namen der Html-Datei (google*.html) kopieren und bei den Einstellungen eintragen. Upload der Datei nicht nötig!
-* Neu: `nav42::setLiClass()` hinzugefügt, thx@polarpixel
-* Neu: `min42` Plugin zur Readme hinzugefügt, thx@webghostx
-* Neu: FAQ Eintrag: "Gibt es ein Tutorial zu SEO42 und/oder weitere Informationen zu den Features des Addons?"
-* Verbessert: SCSS Compiler auf Version 0.0.15 aktualisiert
-* Verbessert: LESS Compiler auf Version 0.5.0 aktualisiert
-* Verbessert: Existiert bereits eine `robots.txt`, `sitemap.xml` oder `google*.html` Datei so wird diese zuerst ausgeliefert bevor das automatische Handling von SEO42 greift
-* Verbessert: Cached Redirects wurden in eine eigene Datei ausgelagert
-* Verbessert: Website Manager 3.0 Kompatibilität
-* Finetuning
-
-### Version 4.0.2 - 28. Oktober 2014
-
-* Neu: Lang-Presets hinzugefügt: ungarisch, schwedisch und norwegisch, thx@polarpixel
-* Neu: www.seobility.net zu den Tools hinzugefügt
-* Neu: `seo42::getAbsoluteImageFile()` hinzugefügt
-* Neu: FAQ Eintrag: "Warum wird meine Website umgeleitet auf eine andere URL?"
-* Neu: FAQ Eintrag: "Das umschalten von $REX['MOD_REWRITE'] hat keine Wirkung?!"
-* Neu: FAQ Eintrag: "Wie werden die Standardeinstellungen von SEO42 wiederhergestellt?"
-* Verbessert: No Double Content Redirect: One Domain Only wieder standardmäßig aktiviert und Option hinzugefügt damit dieser Redirect nur noch fürs Frontend greift per default
-* Finetuning
-
-### Version 4.0.1 - 22. Oktober 2014
-
-* Fixed #147: Der standardmäßig aktivierte No Double Content Redirect führte zu Problemen wenn die URL der Website (noch) nicht korrekt gesetzt war. Default deshalb vorerst deaktiviert.
-* Verbessert: Hinweis in die Startguide aufgenommen: Ein No Double Content Redirect sollte in den Einstellungen ausgewählt werden nachdem das Setup durchgeführt wurde. Empfohlen: One Domain Only
-* Verbessert: Benutzungs-Hinweis für den Tag Editor in den Einstellungen hinzugefügt
-
-### Version 4.0.0 - 21. Oktober 2014
-
-* Update: Bitte die Hinweise in der `UPDATE.md` beachten!
-* Fixed: `seo42::getImageFile()` gab im Backend nicht den richtigen Wert aus und dadurch wurde das Bild nicht angezeigt
-* Neu: Update-Hinweise (auch für alle zukünftigen Versionen) wurden in die Datei `UPDATE.md` ausgelagert und sind auch über die Hilfe im AddOn einsehbar.
-* Neu: No Double Content Redirects eingeführt. Ersetzen die WWW/Non-WWW Redirects aus Setup Schritt 2. One Domain Only Redirect hinzugefügt um nur noch eine Domain zu erlauben.
-* Neu: Updatefähigkeit für REDAXO 4.6 hergestellt. Bei einem Update werden die Einstellungen nicht mehr überschrieben, da diese nun im Data-Ordner von REDAXO abgelegt werden
-* Neu: Einstellungen nun alle über das Backend verfügbar :)
-* Neu: Alle Dateien wie Redirects-Cachedatei und `.htaccess` Backups werden im Data-Ordner von REDAXO abgelegt
-* Neu: Einstellung `redirects` hinzugefügt, um die Redirects-Seite ausschalten zu können (z.B. wenn man die Redirects-Funktionalität des url_control Plugin einsetzt). Die Option kann theoretisch auch von einem Plugin gesetzt werden.
-* Neu: Einstellung `allow_article_id` hinzugefügt, um bei Spezialfällen nicht umgeschriebene Urls zu erlauben. Achtung! Bitte nur einschalten wenn wirklich benötigt! Und: Diese Option setzt die `auto_redirects` Option für die nicht umgeschriebenen Urls ausser Kraft!
-* Neu: `seo42::getIconFile()` inkl. Directoryangabe in den Einstellungen hinzugefügt
-* Verbessert: Das SEO42 Boilerplate in Setup Schritt 3 wurde etwas abgespeckt so dass nur noch die wichtigsten Zeilen sichbar sind
-* Verbessert: `seo42::getMediaUrl()` und `seo42::getAbsoluteMediaFile()` zu den Codebeispielen hinzugefügt
-* API Umstellung: EP's haben jetzt alle den Prefix `SEO42_`
-* API Umstellung: Pathlist Arrays lauten jetzt `$SEO42_URLS` und `$SEO42_IDS`
-* API Umstellung: Alle Funktionen aus der Rewriter-Klasse umbenannten `SEO42Rewrite` sowie die PHP-Dateien selbst beginnen jetzt mit Prefix `seo42_`
-* API Umstellung: `seo42::getImageManagerUrl()` entfernt. Bitte nur noch `seo42::getImageManagerFile()` benutzen
-* Umbenannt: `robots_txt_auto_disallow` in `no_robots_txt_auto_disallow`
-* Entfernt: `drop_dbfields_on_uninstall` Option
-* Entfernt: `debug_article_id` Option
-
 ### Version 3.4.0 - 24. September 2014
 
 * Neu: `seo42::getResourceFile($fileWithPath)` implementiert. Damit kann man nun unabhängig von den gesetzten Resource-Verzeichnissen JS/CSS Dateien inkl. Versionsstring ausgeben lassen. Pfad muss hier mit angegeben werden! Codebeispiele wurden ergänzt.

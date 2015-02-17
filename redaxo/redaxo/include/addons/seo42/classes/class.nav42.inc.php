@@ -10,7 +10,6 @@ class nav42 {
 	protected $activeClass;
 	protected $ulId;
 	protected $ulClass;
-	protected $liClass;
 	protected $liIdFromMetaField;
 	protected $liClassFromMetaField;
 	protected $linkFromUserFunc;
@@ -23,11 +22,6 @@ class nav42 {
 	protected $langHideLiIfOfflineArticle;
 	protected $langUseLangCodeAsLinkText;
 	protected $langUpperCaseLinkText;
-
-	// breadcrumb vars
-	protected $breadcrumbCssClass;
-	protected $breadcrumbOlList;
-	protected $breadcrumbStartArticleName;
 
 	// old vars from rex_navigation
 	var $path = array();
@@ -44,7 +38,6 @@ class nav42 {
 		$this->activeClass = 'selected active';
 		$this->ulId = array();
 		$this->ulClass = array();
-		$this->liClass = '';
 		$this->liIdFromMetaField = '';
 		$this->liClassFromMetaField = '';
 		$this->linkFromUserFunc = '';
@@ -56,10 +49,6 @@ class nav42 {
 		$this->langHideLiIfOfflineArticle = false;
 		$this->langUseLangCodeAsLinkText = false;
 		$this->langUpperCaseLinkText = false;
-
-		$this->breadcrumbCssClass = '';
-		$this->breadcrumbOlList = false;
-		$this->breadcrumbStartArticleName = '';
 	}
 
 	/* ------------------------------------------------------------------------------------------------------ */
@@ -114,10 +103,6 @@ class nav42 {
 		$this->ulClass[$level] = $ulClass;
 	}
 
-	public function setLiClass($liClass) {
-		$this->liClass = $liClass;
-	}
-
 	public function setLiIdFromMetaField($liIdFromMetaField) {
 		$this->liIdFromMetaField = $liIdFromMetaField;
 	}
@@ -162,20 +147,6 @@ class nav42 {
 
 	/* ------------------------------------------------------------------------------------------------------ */
 
-	public function setBreadcrumbCssClass($breadcrumbCssClass) {
-		$this->breadcrumbCssClass = $breadcrumbCssClass;
-	}
-
-	public function setBreadcrumbOlList($breadcrumbOlList) {
-		$this->breadcrumbOlList = $breadcrumbOlList;
-	}
-
-	public function setBreadcrumbStartArticleName($breadcrumbStartArticleName) {
-		$this->breadcrumbStartArticleName = $breadcrumbStartArticleName;
-	}
-
-	/* ------------------------------------------------------------------------------------------------------ */
-
 	protected function _getNavigation($categoryId) { 
 		global $REX;
 
@@ -208,11 +179,6 @@ class nav42 {
 
 				$cssClasses = '';
 				$idAttribute = '';
-
-				// default li class
-				if ($this->liClass != '') {
-					$cssClasses .= ' ' . $this->liClass;
-				}
 
 				// li class from meta infos
 				if ($this->liClassFromMetaField != '' && $cat->getValue($this->liClassFromMetaField) != '') {
@@ -479,58 +445,6 @@ class nav42 {
 		$out .= '</ul>';
 
 		return $out;
-	}
-
-	/* ------------------------------------------------------------------------------------------------------ */
-
-	public function getBreadcrumbNavigation() {
-		global $REX;
-
-		$listType = 'ul';
-
-		if ($this->breadcrumbOlList) {
-			$listType = 'ol';
-		}
-
-		if ($this->breadcrumbCssClass !== '') {
-			$cssClass = ' class="' . $this->breadcrumbCssClass . '"';
-		} else {
-			$cssClass = '';
-		}
-
-		$html = '<' . $listType . $cssClass . '>';
-		$path = explode('|', $REX['ART'][$REX['ARTICLE_ID']]['path'][$REX['CUR_CLANG']] . $REX['ARTICLE_ID']);
-
-		if ($REX['ARTICLE_ID'] !== $REX['START_ARTICLE_ID']) {
-			$path = array_merge(array($REX['START_ARTICLE_ID']), $path);
-		}
-
-		foreach ($path as $id) {
-			if ($id) {
-				if ($this->breadcrumbStartArticleName === false && intval($id) === $REX['START_ARTICLE_ID']) {
-					continue;
-				}
-
-				$article = OOArticle::getArticleById($id);
-				$articleName = $article->getName();
-
-				if ($this->breadcrumbStartArticleName !== '' && intval($id) === $REX['START_ARTICLE_ID']) {
-					$articleName = $this->breadcrumbStartArticleName;
-				}
-
-				$html .= '<li>';
-
-				if (intval($id) === $REX['ARTICLE_ID']) {
-					$html .= $articleName;
-				} else {
-					$html .= '<a href="' . $article->getUrl() . '">' . $articleName . '</a>';
-				}
-
-				$html .= '</li>';
-			}
-		}
-		
-		return $html .= '</' . $listType . '>';
 	}
 }
 

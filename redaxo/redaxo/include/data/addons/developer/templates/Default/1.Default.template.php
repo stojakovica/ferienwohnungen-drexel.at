@@ -56,6 +56,7 @@ $headerImages = array_filter(explode(',', getHierarchicalVar('art_header_images'
 <?php if($isContact) { ?>
     <div id="gmaps">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d346207.6403782717!2d10.38349534550617!3d47.319277181791094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479cbe11353d95cb%3A0x9c0affa0c997d948!2sObergiblen+4a%2C+6653+Obergiblen!5e0!3m2!1sde!2sat!4v1419012682533" width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+        <div class="gmapsOverlay"></div>
     </div>
 <?php }
 else {
@@ -78,12 +79,12 @@ else {
                      data-image-w="400"
                      data-image-h="300">
                     <img src="<?php echo seo42::getMediaFile($h); ?>" alt="">
-                    <div class="container">
-                        <div class="carousel-caption">
-                            <h2>Bildheadline</h2>
-                            <p>Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen.</p>
-                        </div>
-                    </div>
+<!--                    <div class="container">-->
+<!--                        <div class="carousel-caption">-->
+<!--                            <h2>Bildheadline</h2>-->
+<!--                            <p>Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen. Beispieltext zum zeigen.</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             <?php } ?>
         </div>
